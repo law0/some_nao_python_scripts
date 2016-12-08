@@ -9,27 +9,7 @@ import time
 from naoqi import ALProxy
 from naoqi import ALBroker
 from naoqi import ALModule
-
-
-class specialBroker(ALBroker):
-	""" inherit from ALBroker to disconnect object automatically
-		doesn't do what is supposed to do, deprecated
-	
-	"""
-	
-	def __init__(self,*args):
-		super(ALBroker,self).__init__(*args)
-		self.list_of_module=[]
-	
-	def subscribe(self,modu):
-		self.list_of_module.append(modu)
-
-	def onDisconnected(self):	
-		print("onDisconnected called")
-		for mod in self.list_of_module:
-			mod.exit()
-		super(ALBroker,self).onDisconnected()
-			
+import re
 
 class Obey(ALModule):
 	""" Simple module, detect WordRecognized, then execute the order!!!
@@ -50,34 +30,42 @@ class Obey(ALModule):
 		self.mover.setStiffnesses("Body",1.0)
 		self.sr=ALProxy("ALSpeechRecognition")
 		self.sr.setLanguage("French")
-		self.sr.setVocabulary(["assis","debout","accroupi","bras"], False)
+		self.sr.setVocabulary(["assis","debout","accroupi","bras"], True)
 		self.sr.subscribe("obey")		
+		self.regex = re.compile(".*(assis|debout|accroupi|bras).*")
 
 		global memory
 		memory = ALProxy("ALMemory")
 		memory.subscribeToEvent("WordRecognized", self._name, "onWordRecognized")
 
 	def onWordRecognized(self, key, value, message):
-		""" Raise arms, when FaceDetected event
+		""" react and execute order
 	
 		"""
 		
 
 		self.sr.unsubscribe("obey")		
 		memory.unsubscribeToEvent("WordRecognized", self._name)
+
 		print(value)
 		i=0
 		while i<len(value):
-			if value[i+1]>=0.25:
-				if value[i]=="assis":
-					self.pp.goToPosture("Sit", 0.6)
-				elif value[i]=="debout":
-					self.pp.goToPosture("StandInit", 0.6)
-				elif value[i]=="accroupi":
-					self.pp.goToPosture("Crouch", 0.6)
-				elif value[i]=="bras":
-					self.pp.goToPosture("StandZero", 0.6)
-				break
+			res = self.regex.match(value[i])
+			if res:
+				print(res.group(1))
+				if value[i+1]>=0.30:
+					if res.group(1)=="assis":
+						self.pp.goToPosture("Sit", 0.6)
+					elif res.group(1)=="debout":
+						self.pp.goToPosture("StandInit", 0.6)
+					elif res.group(1)=="accroupi":
+						self.pp.goToPosture("Crouch", 0.6)
+					elif res.group(1)=="bras":
+						self.pp.goToPosture("StandZero", 0.6)
+					break
+			else:
+				print(value[i])
+			
 			i=i+2
 		self.mover.waitUntilMoveIsFinished()
 		self.sr.subscribe("obey")		
