@@ -53,7 +53,7 @@ class Obey(ALModule):
 			res = self.regex.match(value[i])
 			if res:
 				print(res.group(1))
-				if value[i+1]>=0.30:
+				if value[i+1]>=0.50:
 					if res.group(1)=="assis":
 						self.pp.goToPosture("Sit", 0.6)
 					elif res.group(1)=="debout":
