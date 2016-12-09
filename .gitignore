@@ -8,3 +8,5 @@ pynaoqi-python2.7-2.1.4.13-linux64.tar.gz
 speech_recog_local.py
 *.vrd
 choregraphe
+*.deb
+C++
