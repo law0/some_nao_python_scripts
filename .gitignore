@@ -1,9 +1,10 @@
 .gitignore
 *.pyc
-pynaoqi-python2.7-2.1.4.13-linux64*
+pynaoqi-python2.7-2.1.4.13-linux64_japonais
+pynaoqi-python2.7-2.1.4.13-linux64_japonais.tar.gz
+pynaoqi-python2.7-2.1.4.13-linux64.tar.gz
 *.PDF
 *pdf
 speech_recog_local.py
-pythonnao.sh
 *.vrd
 choregraphe
