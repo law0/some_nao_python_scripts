@@ -51,7 +51,7 @@ class HumanGreeterModule(ALModule):
         memory.unsubscribeToEvent("FaceDetected",
             "HumanGreeter")
 
-        self.tts.say("Hello, bitches")
+        self.tts.say("Hello")
 	time.sleep(1)
 
         # Subscribe again to the event

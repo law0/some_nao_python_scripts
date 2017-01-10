@@ -30,9 +30,9 @@ class Obey(ALModule):
 		self.mover.setStiffnesses("Body",1.0)
 		self.sr=ALProxy("ALSpeechRecognition")
 		self.sr.setLanguage("French")
-		self.sr.setVocabulary(["assis","debout","accroupi","bras"], True)
+		self.sr.setVocabulary(["assis","debout","accroupi","bras","mignon","demitour","avance","recule"], True)
 		self.sr.subscribe("obey")		
-		self.regex = re.compile(".*(assis|debout|accroupi|bras).*")
+		self.regex = re.compile(".*(assis|debout|accroupi|bras|mignon|demitour|avance|recule).*")
 
 		global memory
 		memory = ALProxy("ALMemory")
@@ -53,7 +53,7 @@ class Obey(ALModule):
 			res = self.regex.match(value[i])
 			if res:
 				print(res.group(1))
-				if value[i+1]>=0.50:
+				if value[i+1]>=0.47:
 					if res.group(1)=="assis":
 						self.pp.goToPosture("Sit", 0.6)
 					elif res.group(1)=="debout":
@@ -62,6 +62,14 @@ class Obey(ALModule):
 						self.pp.goToPosture("Crouch", 0.6)
 					elif res.group(1)=="bras":
 						self.pp.goToPosture("StandZero", 0.6)
+					elif res.group(1)=="mignon":
+						self.tts.say("Oui je sais!")
+					elif res.group(1)=="demitour":
+						self.mover.moveTo(0,0, 3.0)
+					elif res.group(1)=="avance":
+						self.mover.moveTo(0.2, 0, 0)
+					elif res.group(1)=="recule":
+						self.mover.moveTo(-0.2, 0, 0)			
 					break
 			else:
 				print(value[i])
